@@ -11,4 +11,5 @@ import UIKit
 class PageConfigures: NSObject {
     static let numberOfPages: CGFloat = 3
     static let selectedColor: UIColor = UIColor.blueColor()
+    static let tabSelectedColor: UIColor = UIColor.cyanColor()
 }

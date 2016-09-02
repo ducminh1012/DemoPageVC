@@ -10,6 +10,7 @@ import UIKit
 
 protocol PageViewControllerDelegate {
     func didFinishAnimating(index: Int)
+    func scrollCurrentBarView(index: Int, contentOffsetX: CGFloat)
 }
 
 class PageViewController: UIPageViewController {
@@ -38,6 +39,13 @@ class PageViewController: UIPageViewController {
         self.dataSource = self
         self.delegate = self
         
+        for view in self.view.subviews {
+            if let scrollView = view as? UIScrollView{
+                scrollView.delegate = self
+            }
+        }
+        
+        
         if let firstViewController = orderedViewControllers.first {
             setViewControllers([firstViewController],
                                direction: .Forward,
@@ -50,7 +58,7 @@ class PageViewController: UIPageViewController {
 
 }
 
-extension PageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource{
+extension PageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource, UIScrollViewDelegate{
 
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController?
@@ -128,4 +136,35 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
             }
         }
     }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+        if scrollView.contentOffset.x == self.view.bounds.width {
+            return
+        }
+        
+        var nextIndex: Int = 0
+        var currentIndex = self.currentIndex - 1
+        
+        if scrollView.contentOffset.x > self.view.bounds.width {
+            nextIndex = currentIndex + 1
+        }else{
+            nextIndex = currentIndex - 1
+        }
+        
+        if nextIndex == self.orderedViewControllers.count {
+            nextIndex = 0
+        }else if(nextIndex < 0){
+            nextIndex = self.orderedViewControllers.count - 1
+        }
+        
+        let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
+        
+        self.pageViewDelegate?.scrollCurrentBarView(nextIndex, contentOffsetX: scrollOffsetX)
+        
+//        print("nextIndex: \(nextIndex)")
+        
+    }
+
+
 }
