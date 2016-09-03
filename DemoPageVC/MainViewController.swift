@@ -54,10 +54,14 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! TabPageCell
         
         cell.titleLabel.text = tabPageTitles[indexPath.item]
+        cell.titleLabel.textColor = PageConfigures.selectedColor
         cell.backgroundColor = UIColor.orangeColor()
         
         if indexPath.item != 0 {
             cell.hideCurrentBarView()
+        }else{
+            cell.highlightTitle()
+            cell.showCurrentBarView()
         }
         
         
@@ -84,14 +88,32 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         currentIndex = indexPath.item
         
+        for indexPath in collectionView.indexPathsForVisibleItems(){
+            let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
+            
+            cell.unHighlightTitle()
+            cell.hideCurrentBarView()
+        }
+        
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
+        
+        cell.showCurrentBarView()
+        cell.highlightTitle()
+        
+        
         pageVC?.didSelectTab(indexPath.item)
     }
     
     func didFinishAnimating(index: Int) {
         let indexPath = NSIndexPath(forItem: index, inSection: 0)
 
+        
+        let cell = self.segmentCollectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
+        
         self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .None)
         self.currentIndex = index
+        
+        cell.showCurrentBarView()
         
     }
 
@@ -124,7 +146,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 //            let distance = (currentCell.frame.width / 2.0) + (nextCell.frame.width / 2.0)
             let scrollRate = contentOffsetX / self.view.frame.width
             
-            if fabs(scrollRate) > 0.6 {
+            if fabs(scrollRate) > 0.5 {
                 nextCell.highlightTitle()
                 currentCell.unHighlightTitle()
                 nextCell.showCurrentBarView()
@@ -147,8 +169,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 //            }
 //            currentBarViewWidthConstraint.constant = currentBarViewWidth + width
             
-            print("currentIndex: \(currentIndex)")
-            print("nextIndex: \(nextIndex)")
+//            print("currentIndex: \(currentIndex)")
+//            print("nextIndex: \(nextIndex)")
         }
     }
 

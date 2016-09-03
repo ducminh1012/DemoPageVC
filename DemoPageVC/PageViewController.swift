@@ -15,7 +15,11 @@ protocol PageViewControllerDelegate {
 
 class PageViewController: UIPageViewController {
 
+    var shouldScroll = true
+
     var currentIndex : Int = 0
+    
+    var currentScrollIndex = 0
     
     var pageViewDelegate: PageViewControllerDelegate?
     var pageColors : Array<UIColor> = [UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor()]
@@ -110,6 +114,10 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
             
             self.pageViewDelegate?.didFinishAnimating(self.currentIndex)
             
+            shouldScroll = true
+
+            self.currentScrollIndex = self.currentIndex
+            
             print("previousIndex \(previousVC.pageIndex)")
             print("currentIndex \(self.currentIndex)")
         }
@@ -118,13 +126,15 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
     }
 
     func pageViewController(pageViewController: UIPageViewController, willTransitionToViewControllers pendingViewControllers: [UIViewController]) {
-        let viewController = pendingViewControllers[0] as! ContentViewController
-        
-        self.currentIndex = viewController.pageIndex
+            let viewController = pendingViewControllers[0] as! ContentViewController
+            
+            self.currentIndex = viewController.pageIndex
     }
 
     func didSelectTab(index: Int){
-        print("index \(index)")
+//        print("index \(index)")
+        
+        shouldScroll = false
         
         let direction: UIPageViewControllerNavigationDirection = index >= self.currentIndex ? .Forward : .Reverse
        
@@ -139,30 +149,38 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         
-        if scrollView.contentOffset.x == self.view.bounds.width {
-            return
+        
+        if shouldScroll {
+            if scrollView.contentOffset.x == self.view.bounds.width {
+                return
+            }
+            
+            var nextIndex: Int
+            let currentIndex = self.currentScrollIndex
+            
+            if scrollView.contentOffset.x > self.view.bounds.width {
+                nextIndex = currentIndex + 1
+            }else{
+                nextIndex = currentIndex - 1
+                
+            }
+            
+            if nextIndex == self.orderedViewControllers.count {
+                nextIndex = 0
+            }
+            else if(nextIndex < 0){
+                nextIndex = self.orderedViewControllers.count - 1
+            }
+            
+            let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
+            
+            self.pageViewDelegate?.scrollCurrentBarView(nextIndex, contentOffsetX: scrollOffsetX)
+            print("currentIndex: \(currentIndex)")
+            print("nextIndex: \(nextIndex)")
+
         }
         
-        var nextIndex: Int = 0
-        var currentIndex = self.currentIndex - 1
         
-        if scrollView.contentOffset.x > self.view.bounds.width {
-            nextIndex = currentIndex + 1
-        }else{
-            nextIndex = currentIndex - 1
-        }
-        
-        if nextIndex == self.orderedViewControllers.count {
-            nextIndex = 0
-        }else if(nextIndex < 0){
-            nextIndex = self.orderedViewControllers.count - 1
-        }
-        
-        let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
-        
-        self.pageViewDelegate?.scrollCurrentBarView(nextIndex, contentOffsetX: scrollOffsetX)
-        
-//        print("nextIndex: \(nextIndex)")
         
     }
 
