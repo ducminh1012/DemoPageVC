@@ -64,7 +64,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gI8-zC-Arr">
-                                                    <rect key="frame" x="10" y="1.5" width="63" height="21"/>
+                                                    <rect key="frame" x="10" y="1" width="63" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -94,8 +94,16 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <containerView opaque="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JIc-HX-Jao">
-                                <rect key="frame" x="0.0" y="32" width="320" height="440"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yos-JZ-IDL">
+                                <rect key="frame" x="60" y="35" width="200" height="5"/>
+                                <color key="backgroundColor" red="1" green="0.23515298500000001" blue="0.25541565729999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="5" id="aDV-p2-5MQ"/>
+                                    <constraint firstAttribute="width" constant="200" id="t9F-6s-f31"/>
+                                </constraints>
+                            </view>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JIc-HX-Jao">
+                                <rect key="frame" x="0.0" y="40" width="320" height="440"/>
                                 <connections>
                                     <segue destination="Jut-Qq-1Wf" kind="embed" id="W8W-dB-dcX"/>
                                 </connections>
@@ -105,15 +113,19 @@
                         <constraints>
                             <constraint firstItem="JIc-HX-Jao" firstAttribute="leading" secondItem="ENQ-t9-9UQ" secondAttribute="leading" id="5tX-Yf-bcJ"/>
                             <constraint firstItem="JlT-ul-9SZ" firstAttribute="leading" secondItem="ENQ-t9-9UQ" secondAttribute="leading" id="Bzo-Mp-5lI"/>
+                            <constraint firstItem="yos-JZ-IDL" firstAttribute="centerX" secondItem="ENQ-t9-9UQ" secondAttribute="centerX" id="UBb-OM-v4f"/>
                             <constraint firstItem="JlT-ul-9SZ" firstAttribute="top" secondItem="ENQ-t9-9UQ" secondAttribute="top" id="Yhn-Lv-U9U"/>
                             <constraint firstAttribute="trailing" secondItem="JlT-ul-9SZ" secondAttribute="trailing" id="YzO-eG-4v4"/>
                             <constraint firstItem="N9o-hD-aFD" firstAttribute="top" secondItem="JIc-HX-Jao" secondAttribute="bottom" id="g1M-4j-T7f"/>
                             <constraint firstItem="JIc-HX-Jao" firstAttribute="top" secondItem="JlT-ul-9SZ" secondAttribute="bottom" id="h6j-Ip-m9s"/>
                             <constraint firstAttribute="trailing" secondItem="JIc-HX-Jao" secondAttribute="trailing" id="i3L-nc-SXk"/>
+                            <constraint firstItem="JIc-HX-Jao" firstAttribute="top" secondItem="yos-JZ-IDL" secondAttribute="bottom" id="nrG-Kw-AV6"/>
                         </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="currentBarView" destination="yos-JZ-IDL" id="OwI-Pq-g9e"/>
+                        <outlet property="currentBarViewWidthConstraint" destination="t9F-6s-f31" id="MPT-La-8ZA"/>
                         <outlet property="segmentCollectionView" destination="JlT-ul-9SZ" id="wdT-Us-Iml"/>
                     </connections>
                 </viewController>

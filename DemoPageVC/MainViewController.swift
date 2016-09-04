@@ -11,8 +11,11 @@ import UIKit
 class MainViewController: UIViewController {
 
     
+    @IBOutlet weak var currentBarViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var currentBarView: UIView!
     @IBOutlet var segmentCollectionView: UICollectionView!
 
+    var currentBarViewLeftConstraint: NSLayoutConstraint?
     var currentIndex = 0
     
     let tabPageTitles = ["Tab 1", "Tab 2", "Tab 3"]
@@ -30,6 +33,29 @@ class MainViewController: UIViewController {
         self.segmentCollectionView.dataSource = self
 
         self.segmentCollectionView.selectItemAtIndexPath(NSIndexPath(forItem: 0,inSection: 0), animated: false, scrollPosition: .None)
+        
+        self.currentBarViewWidthConstraint.constant = self.view.bounds.width/CGFloat(self.tabPageTitles.count)
+        
+        currentBarView.removeFromSuperview()
+        self.segmentCollectionView.addSubview(currentBarView)
+        currentBarView.translatesAutoresizingMaskIntoConstraints = false
+        let top = NSLayoutConstraint(item: currentBarView,
+                                     attribute: .Top,
+                                     relatedBy: .Equal,
+                                     toItem: self.segmentCollectionView,
+                                     attribute: .Top,
+                                     multiplier: 1.0,
+                                     constant: 5 - currentBarView.frame.height)
+        
+        let left = NSLayoutConstraint(item: currentBarView,
+                                      attribute: .Leading,
+                                      relatedBy: .Equal,
+                                      toItem: self.segmentCollectionView,
+                                      attribute: .Leading,
+                                      multiplier: 1.0,
+                                      constant: 0.0)
+        currentBarViewLeftConstraint = left
+        self.segmentCollectionView.addConstraints([top, left])
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,7 +79,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! TabPageCell
         
-        cell.titleLabel.text = tabPageTitles[indexPath.item]
+        cell.titleLabel.text = "Tab \(indexPath.item)"
         cell.titleLabel.textColor = PageConfigures.selectedColor
         cell.backgroundColor = UIColor.orangeColor()
         
@@ -66,7 +92,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         
         let selectedBackground = UIView()
-        selectedBackground.backgroundColor = UIColor.greenColor()
+        selectedBackground.backgroundColor = UIColor.purpleColor()
         cell.selectedBackgroundView = selectedBackground
         return cell
     }
@@ -93,6 +119,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             cell.unHighlightTitle()
             cell.hideCurrentBarView()
+            
+            currentBarView.hidden = false
         }
         
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
@@ -161,11 +189,11 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 //                let scroll = scrollRate * distance
 //                collectionView.contentOffset.x = collectionViewContentOffsetX + scroll
 //            } else {
-//                if scrollRate > 0 {
-//                    currentBarViewLeftConstraint?.constant = currentCell.frame.minX + scrollRate * currentCell.frame.width
-//                } else {
-//                    currentBarViewLeftConstraint?.constant = currentCell.frame.minX + nextCell.frame.width * scrollRate
-//                }
+                if scrollRate > 0 {
+                    currentBarViewLeftConstraint?.constant = currentCell.frame.minX + scrollRate * currentCell.frame.width
+                } else {
+                    currentBarViewLeftConstraint?.constant = currentCell.frame.minX + nextCell.frame.width * scrollRate
+                }
 //            }
 //            currentBarViewWidthConstraint.constant = currentBarViewWidth + width
             
