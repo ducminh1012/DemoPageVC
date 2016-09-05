@@ -9,7 +9,8 @@
 import UIKit
 
 class PageConfigures: NSObject {
-    static let numberOfPages: CGFloat = 3
+    static let isInfinity = false
+    static let numberOfPages: CGFloat = 10
     static let selectedColor: UIColor = UIColor.blueColor()
     static let tabSelectedColor: UIColor = UIColor.whiteColor()
 }

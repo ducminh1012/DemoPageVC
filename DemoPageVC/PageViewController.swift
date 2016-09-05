@@ -22,10 +22,17 @@ class PageViewController: UIPageViewController {
     var currentScrollIndex = 0
     
     var pageViewDelegate: PageViewControllerDelegate?
-    var pageColors : Array<UIColor> = [UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor()]
+    var pageColors : Array<UIColor> = [UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor()]
     
     private(set) lazy var orderedViewControllers: [ContentViewController] = {
         return [self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"), self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"), self.newColoredViewController("red"),
                 self.newColoredViewController("green"),
                 self.newColoredViewController("blue")]
     }()
@@ -69,9 +76,11 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
     {
         var index = (viewController as! ContentViewController).pageIndex
         
-        if index - 1 == -1 {
+        if PageConfigures.isInfinity && index - 1 == -1 {
             index = self.orderedViewControllers.count - 1
             return viewControllerAtIndex(index)
+        }else if index - 1 == -1{
+            return nil
         }
         
         index = index - 1
@@ -84,9 +93,13 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
     {
         var index = (viewController as! ContentViewController).pageIndex
         
-        if index + 1 == self.orderedViewControllers.count {
+        
+        
+        if PageConfigures.isInfinity && index + 1 == self.orderedViewControllers.count{
             index = 0
             return viewControllerAtIndex(index)
+        }else if index + 1 == self.orderedViewControllers.count{
+            return nil
         }
         
         index += 1
@@ -165,12 +178,16 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
                 
             }
             
-            if nextIndex == self.orderedViewControllers.count {
-                nextIndex = 0
+            if PageConfigures.isInfinity {
+                if nextIndex == self.orderedViewControllers.count {
+                    nextIndex = 0
+                }
+                else if(nextIndex < 0){
+                    nextIndex = self.orderedViewControllers.count - 1
+                }
             }
-            else if(nextIndex < 0){
-                nextIndex = self.orderedViewControllers.count - 1
-            }
+            
+           
             
             let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
             
