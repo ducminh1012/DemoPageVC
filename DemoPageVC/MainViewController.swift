@@ -9,10 +9,7 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    
-    
-    @IBOutlet weak var currentBarViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var currentBarView: UIView!
+
     @IBOutlet var segmentCollectionView: UICollectionView!
     
     var currentBarViewLeftConstraint: NSLayoutConstraint?
@@ -34,28 +31,6 @@ class MainViewController: UIViewController {
         
         self.segmentCollectionView.selectItemAtIndexPath(NSIndexPath(forItem: 0,inSection: 0), animated: false, scrollPosition: .None)
         
-        self.currentBarViewWidthConstraint.constant = 100
-        
-        currentBarView.removeFromSuperview()
-        self.segmentCollectionView.addSubview(currentBarView)
-        currentBarView.translatesAutoresizingMaskIntoConstraints = false
-        let top = NSLayoutConstraint(item: currentBarView,
-                                     attribute: .Top,
-                                     relatedBy: .Equal,
-                                     toItem: self.segmentCollectionView,
-                                     attribute: .Top,
-                                     multiplier: 1.0,
-                                     constant: 5 - currentBarView.frame.height)
-        
-        let left = NSLayoutConstraint(item: currentBarView,
-                                      attribute: .Leading,
-                                      relatedBy: .Equal,
-                                      toItem: self.segmentCollectionView,
-                                      attribute: .Leading,
-                                      multiplier: 1.0,
-                                      constant: 0.0)
-        currentBarViewLeftConstraint = left
-        self.segmentCollectionView.addConstraints([top, left])
     }
     
     override func didReceiveMemoryWarning() {
@@ -119,8 +94,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             cell.unHighlightTitle()
             cell.hideCurrentBarView()
-            
-            currentBarView.hidden = false
+
         }
         
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
@@ -217,8 +191,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             //            }
             //            currentBarViewWidthConstraint.constant = currentBarViewWidth + width
             
-            print("currentIndex: \(currentIndex)")
-            print("nextIndex: \(nextIndex)")
+//            print("currentIndex: \(currentIndex)")
+//            print("nextIndex: \(nextIndex)")
         }
     }
     
