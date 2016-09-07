@@ -30,11 +30,11 @@ class PageViewController: UIPageViewController {
                 self.newColoredViewController("blue"),
                 self.newColoredViewController("red"),
                 self.newColoredViewController("green"),
-                self.newColoredViewController("blue"), self.newColoredViewController("red"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red"),
                 self.newColoredViewController("green"),
-                self.newColoredViewController("blue"), self.newColoredViewController("red"),
-                self.newColoredViewController("green"),
-                self.newColoredViewController("blue")]
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red")]
     }()
     
     private func newColoredViewController(color: String) -> ContentViewController {
@@ -192,8 +192,8 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
             let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
             
             self.pageViewDelegate?.scrollCurrentBarView(nextIndex, contentOffsetX: scrollOffsetX)
-            print("currentIndex: \(currentIndex)")
-            print("nextIndex: \(nextIndex)")
+//            print("currentIndex: \(currentIndex)")
+//            print("nextIndex: \(nextIndex)")
 
         }
         

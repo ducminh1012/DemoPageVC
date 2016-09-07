@@ -32,7 +32,7 @@
             </objects>
             <point key="canvasLocation" x="562" y="615"/>
         </scene>
-        <!--Main View Controller-->
+        <!--Page View Controller-->
         <scene sceneID="ml0-hk-u4h">
             <objects>
                 <viewController storyboardIdentifier="vc" id="Obx-cQ-JZR" customClass="MainViewController" customModule="DemoPageVC" customModuleProvider="target" sceneMemberID="viewController">
@@ -52,6 +52,7 @@
                             </containerView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="JlT-ul-9SZ">
                                 <rect key="frame" x="0.0" y="64" width="320" height="40"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="Nth-Tf-lZd"/>
                                 </constraints>
@@ -112,7 +113,7 @@
                             <constraint firstAttribute="trailing" secondItem="JIc-HX-Jao" secondAttribute="trailing" id="i3L-nc-SXk"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="2pr-LH-MuW"/>
+                    <navigationItem key="navigationItem" title="Page View Controller" id="2pr-LH-MuW"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="segmentCollectionView" destination="JlT-ul-9SZ" id="wdT-Us-Iml"/>
