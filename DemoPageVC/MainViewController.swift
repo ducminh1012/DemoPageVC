@@ -12,7 +12,8 @@ class MainViewController: UIViewController {
 
     @IBOutlet var segmentCollectionView: UICollectionView!
     
-    var currentBarViewLeftConstraint: NSLayoutConstraint?
+//    var currentBarViewLeftConstraint: NSLayoutConstraint?
+    var currentBarView: UIView!
     var currentIndex = 0
     
     let tabPageTitles = ["Tab 1", "Tab 2", "Tab 3"]
@@ -29,8 +30,12 @@ class MainViewController: UIViewController {
         self.segmentCollectionView.delegate = self
         self.segmentCollectionView.dataSource = self
         
-        self.segmentCollectionView.selectItemAtIndexPath(NSIndexPath(forItem: 0,inSection: 0), animated: false, scrollPosition: .None)
+        self.segmentCollectionView.selectItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0), animated: false, scrollPosition: .None)
         
+        
+        currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
+        currentBarView.backgroundColor = UIColor.blueColor()
+        self.segmentCollectionView.addSubview(currentBarView)
     }
     
     override func didReceiveMemoryWarning() {
@@ -104,7 +109,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
         
-        self.currentBarViewLeftConstraint?.constant = cell.frame.minX
+//        self.currentBarViewLeftConstraint?.constant = cell.frame.minX
         
         pageVC?.didSelectTab(indexPath.item)
     }
@@ -130,7 +135,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
             
-            self.currentBarViewLeftConstraint?.constant = cell.frame.minX
+//            self.currentBarViewLeftConstraint?.constant = cell.frame.minX
             
             self.currentIndex = index
             
@@ -161,14 +166,17 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 currentCell.highlightTitle()
                 currentCell.showCurrentBarView()
             }
+            
 
             if scrollRate > 0 {
+                currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * currentCell.frame.width
                 
-                currentBarViewLeftConstraint?.constant = currentCell.frame.minX + scrollRate * currentCell.frame.width
+//                currentBarViewLeftConstraint?.constant = currentCell.frame.minX + scrollRate * currentCell.frame.width
                 
 
             } else {
-                currentBarViewLeftConstraint?.constant = currentCell.frame.minX + nextCell.frame.width * scrollRate
+                currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * nextCell.frame.width
+//                currentBarViewLeftConstraint?.constant = currentCell.frame.minX + nextCell.frame.width * scrollRate
             }
             
             
