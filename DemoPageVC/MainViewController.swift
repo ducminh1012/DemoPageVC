@@ -12,16 +12,11 @@ class MainViewController: UIViewController {
 
     @IBOutlet var segmentCollectionView: UICollectionView!
     
-//    var currentBarViewLeftConstraint: NSLayoutConstraint?
     var currentBarView: UIView!
     var currentIndex = 0
     
     let tabPageTitles = ["Tab 1", "Tab 2", "Tab 3"]
-    var pageVC: PageViewController? {
-        didSet {
-            //            pageVC?.pageViewDelegate = self
-        }
-    }
+    var pageVC: PageViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,15 +27,12 @@ class MainViewController: UIViewController {
         
         self.segmentCollectionView.selectItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0), animated: false, scrollPosition: .None)
         
+        if PageConfigures.isFollowFinger {
+            currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
+            currentBarView.backgroundColor = UIColor.blueColor()
+            self.segmentCollectionView.addSubview(currentBarView)
+        }
         
-        currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
-        currentBarView.backgroundColor = UIColor.blueColor()
-        self.segmentCollectionView.addSubview(currentBarView)
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     
@@ -99,7 +91,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             cell.unHighlightTitle()
             cell.hideCurrentBarView()
-
+            
         }
         
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
@@ -109,7 +101,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
         
-//        self.currentBarViewLeftConstraint?.constant = cell.frame.minX
         
         pageVC?.didSelectTab(indexPath.item)
     }
@@ -135,7 +126,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
             
-//            self.currentBarViewLeftConstraint?.constant = cell.frame.minX
             
             self.currentIndex = index
             
@@ -147,38 +137,36 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func scrollCurrentBarView(index: Int, contentOffsetX: CGFloat) {
         let nextIndex = index
-
+        
         
         let currentIndexPath = NSIndexPath(forItem: currentIndex, inSection: 0)
         let nextIndexPath = NSIndexPath(forItem: nextIndex, inSection: 0)
         if let currentCell = segmentCollectionView.cellForItemAtIndexPath(currentIndexPath) as? TabPageCell, nextCell = segmentCollectionView.cellForItemAtIndexPath(nextIndexPath) as? TabPageCell {
             nextCell.hideCurrentBarView()
             currentCell.hideCurrentBarView()
-
+            
             let scrollRate = contentOffsetX / self.view.frame.width
             
-            if fabs(scrollRate) > 0.5 {
-                nextCell.highlightTitle()
-                currentCell.unHighlightTitle()
-                nextCell.showCurrentBarView()
-            } else {
-                nextCell.unHighlightTitle()
-                currentCell.highlightTitle()
-                currentCell.showCurrentBarView()
-            }
-            
-
-            if scrollRate > 0 {
-                currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * currentCell.frame.width
+            if !PageConfigures.isFollowFinger {
                 
-//                currentBarViewLeftConstraint?.constant = currentCell.frame.minX + scrollRate * currentCell.frame.width
+                if fabs(scrollRate) > 0.5 {
+                    nextCell.highlightTitle()
+                    currentCell.unHighlightTitle()
+                    nextCell.showCurrentBarView()
+                } else {
+                    nextCell.unHighlightTitle()
+                    currentCell.highlightTitle()
+                    currentCell.showCurrentBarView()
+                }
+            }else{
                 
-
-            } else {
-                currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * nextCell.frame.width
-//                currentBarViewLeftConstraint?.constant = currentCell.frame.minX + nextCell.frame.width * scrollRate
+                if scrollRate > 0 {
+                    currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * currentCell.frame.width
+                    
+                } else {
+                    currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * nextCell.frame.width
+                }
             }
-            
             
         }
     }
