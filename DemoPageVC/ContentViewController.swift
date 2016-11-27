@@ -12,7 +12,7 @@ class ContentViewController: UIViewController {
 
     var pageIndex = 0
     var imageFile = ""
-    var backgroundColor: UIColor = UIColor.redColor()
+    var backgroundColor: UIColor = UIColor.red
     
     override func viewDidLoad() {
         super.viewDidLoad()

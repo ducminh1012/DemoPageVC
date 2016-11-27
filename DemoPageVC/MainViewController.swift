@@ -25,19 +25,19 @@ class MainViewController: UIViewController {
         self.segmentCollectionView.delegate = self
         self.segmentCollectionView.dataSource = self
         
-        self.segmentCollectionView.selectItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0), animated: false, scrollPosition: .None)
+        self.segmentCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionViewScrollPosition())
         
         if PageConfigures.isFollowFinger {
             currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
-            currentBarView.backgroundColor = UIColor.blueColor()
+            currentBarView.backgroundColor = UIColor.blue
             self.segmentCollectionView.addSubview(currentBarView)
         }
         
     }
     
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let vc = segue.destinationViewController as! PageViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! PageViewController
         vc.pageViewDelegate = self
         self.pageVC = vc
     }
@@ -45,15 +45,15 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, PageViewControllerDelegate{
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return Int(PageConfigures.numberOfPages)
     }
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! TabPageCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TabPageCell
         
         cell.titleLabel.text = "Tab \(indexPath.item + 1)"
         cell.titleLabel.textColor = PageConfigures.selectedColor
-        cell.backgroundColor = UIColor.orangeColor()
+        cell.backgroundColor = UIColor.orange
         
         if indexPath.item != self.currentIndex {
             cell.hideCurrentBarView()
@@ -64,67 +64,67 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         
         let selectedBackground = UIView()
-        selectedBackground.backgroundColor = UIColor.purpleColor()
+        selectedBackground.backgroundColor = UIColor.purple
         cell.selectedBackgroundView = selectedBackground
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 40)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         
         currentIndex = indexPath.item
         
-        for indexPath in collectionView.indexPathsForVisibleItems(){
-            let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
+        for indexPath in collectionView.indexPathsForVisibleItems{
+            let cell = collectionView.cellForItem(at: indexPath) as! TabPageCell
             
             cell.unHighlightTitle()
             cell.hideCurrentBarView()
             
         }
         
-        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! TabPageCell
+        let cell = collectionView.cellForItem(at: indexPath) as! TabPageCell
         
         cell.showCurrentBarView()
         cell.highlightTitle()
         
-        self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
+        self.segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
         
         
         pageVC?.didSelectTab(indexPath.item)
     }
     
-    func didFinishAnimating(index: Int) {
-        let indexPath = NSIndexPath(forItem: index, inSection: 0)
+    func didFinishAnimating(_ index: Int) {
+        let indexPath = IndexPath(item: index, section: 0)
         
         
-        if let cell = self.segmentCollectionView.cellForItemAtIndexPath(indexPath) as? TabPageCell {
+        if let cell = self.segmentCollectionView.cellForItem(at: indexPath) as? TabPageCell {
             
-            guard let indexPaths = self.segmentCollectionView.indexPathsForSelectedItems() else{
+            guard let indexPaths = self.segmentCollectionView.indexPathsForSelectedItems else{
                 return
             }
             
             // Deselect all cell in collection
             for indexPath in indexPaths {
-                self.segmentCollectionView.deselectItemAtIndexPath(indexPath, animated: false)
+                self.segmentCollectionView.deselectItem(at: indexPath, animated: false)
                 
-                for cell in self.segmentCollectionView.visibleCells() as! [TabPageCell] {
+                for cell in self.segmentCollectionView.visibleCells as! [TabPageCell] {
                     cell.hideCurrentBarView()
                 }
             }
             
-            self.segmentCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
+            self.segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             
             
             self.currentIndex = index
@@ -135,13 +135,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     
-    func scrollCurrentBarView(index: Int, contentOffsetX: CGFloat) {
+    func scrollCurrentBarView(_ index: Int, contentOffsetX: CGFloat) {
         let nextIndex = index
         
         
-        let currentIndexPath = NSIndexPath(forItem: currentIndex, inSection: 0)
-        let nextIndexPath = NSIndexPath(forItem: nextIndex, inSection: 0)
-        if let currentCell = segmentCollectionView.cellForItemAtIndexPath(currentIndexPath) as? TabPageCell, nextCell = segmentCollectionView.cellForItemAtIndexPath(nextIndexPath) as? TabPageCell {
+        let currentIndexPath = IndexPath(item: currentIndex, section: 0)
+        let nextIndexPath = IndexPath(item: nextIndex, section: 0)
+        if let currentCell = segmentCollectionView.cellForItem(at: currentIndexPath) as? TabPageCell, let nextCell = segmentCollectionView.cellForItem(at: nextIndexPath) as? TabPageCell {
             nextCell.hideCurrentBarView()
             currentCell.hideCurrentBarView()
             

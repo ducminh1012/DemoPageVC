@@ -11,8 +11,8 @@ import UIKit
 class PageConfigures: NSObject {
     static let isInfinity = false
     static let numberOfPages: CGFloat = 10
-    static let selectedColor: UIColor = UIColor.blueColor()
-    static let tabSelectedColor: UIColor = UIColor.whiteColor()
+    static let selectedColor: UIColor = UIColor.blue
+    static let tabSelectedColor: UIColor = UIColor.white
     static let isFollowFinger = true
 }
 
