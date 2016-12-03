@@ -191,6 +191,9 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
             
             let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
             
+            print(scrollView.contentOffset.x)
+            
+            
             self.pageViewDelegate?.scrollCurrentBarView(nextIndex, contentOffsetX: scrollOffsetX)
 //            print("currentIndex: \(currentIndex)")
 //            print("nextIndex: \(nextIndex)")
