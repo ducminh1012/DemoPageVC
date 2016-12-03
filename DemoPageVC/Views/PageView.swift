@@ -1,59 +1,68 @@
 //
-//  ViewController.swift
+//  PageView.swift
 //  DemoPageVC
 //
-//  Created by Duc Minh on 8/23/16.
+//  Created by Kyou on 12/3/16.
 //  Copyright © 2016 Duc Minh. All rights reserved.
 //
 
 import UIKit
 
-class MainViewController: UIViewController {
+class PageView: UIView {
 
-    @IBOutlet weak var contentView: UIView!
-    
-    var segmentCollectionView: UICollectionView!
-    var containerView: UIView!
-    
-    
+//    @IBOutlet var view: UIView!
+    @IBOutlet weak var segmentCollectionView: UICollectionView!
+
     var currentBarView: UIView!
-    var currentIndex = 0
-
+    var pageViewDelegate: PageViewControllerDelegate?
+    var shouldScroll = true
+    
+    var currentIndex : Int = 0
+    
+    var currentScrollIndex = 0
+    
     var pageVC: PageViewController?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        let collectionViewLayout = UICollectionViewFlowLayout()
-        collectionViewLayout.scrollDirection = .horizontal
+    var pageColors : Array<UIColor> = [UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue]
+    
+    fileprivate func newColoredViewController(_ color: String) -> ContentViewController {
+        return UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "\(color)") as! ContentViewController
+    }
+    
+    fileprivate(set) lazy var orderedViewControllers: [ContentViewController] = {
+        return [self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red")]
+    }()
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         
-        self.segmentCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 40), collectionViewLayout: collectionViewLayout)
-        self.segmentCollectionView.showsHorizontalScrollIndicator = false
-        self.segmentCollectionView.register(UINib(nibName: "TabPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
-        self.segmentCollectionView.delegate = self
-        self.segmentCollectionView.dataSource = self
-        self.segmentCollectionView.backgroundColor = UIColor.white
-        self.segmentCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionViewScrollPosition())
+        let xibView = Bundle.main.loadNibNamed("PageView", owner: self, options: nil)?[0] as! UIView
+        xibView.frame = self.bounds
+        xibView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.addSubview(xibView)
+        
         
         if PageConfigures.isFollowFinger {
             currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
             currentBarView.backgroundColor = UIColor.blue
             self.segmentCollectionView.addSubview(currentBarView)
         }
-        
-        self.contentView.addSubview(self.segmentCollectionView)
-        
+
     }
-    
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let vc = segue.destination as! PageViewController
-        vc.pageViewDelegate = self
-        self.pageVC = vc
-    }
+
 }
 
-extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, PageViewControllerDelegate{
+extension PageView: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, PageViewControllerDelegate{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return Int(PageConfigures.numberOfPages)
@@ -111,7 +120,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         self.segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
         
-        
         pageVC?.didSelectTab(indexPath.item)
     }
     
@@ -155,7 +163,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             nextCell.hideCurrentBarView()
             currentCell.hideCurrentBarView()
             
-            let scrollRate = contentOffsetX / self.view.frame.width
+            let scrollRate = contentOffsetX / self.frame.width
             
             if !PageConfigures.isFollowFinger {
                 
