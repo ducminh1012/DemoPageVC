@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B8314911DF2B141005D1657 /* PageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B8314901DF2B141005D1657 /* PageView.xib */; };
+		3B8314931DF2B170005D1657 /* PageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8314921DF2B170005D1657 /* PageView.swift */; };
 		3BCA739B1D6CB0860076E745 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCA739A1D6CB0860076E745 /* AppDelegate.swift */; };
 		3BCA739D1D6CB0860076E745 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCA739C1D6CB0860076E745 /* MainViewController.swift */; };
 		3BCA73A01D6CB0860076E745 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BCA739E1D6CB0860076E745 /* Main.storyboard */; };
@@ -20,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B8314901DF2B141005D1657 /* PageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PageView.xib; path = Views/PageView.xib; sourceTree = "<group>"; };
+		3B8314921DF2B170005D1657 /* PageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PageView.swift; path = Views/PageView.swift; sourceTree = "<group>"; };
 		3BCA73971D6CB0860076E745 /* DemoPageVC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoPageVC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BCA739A1D6CB0860076E745 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3BCA739C1D6CB0860076E745 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -75,6 +79,8 @@
 				3BCA73A61D6CB0860076E745 /* Info.plist */,
 				3BCEC0491D77D7E000D1D513 /* TabPageCell.swift */,
 				3BCEC04A1D77D7E000D1D513 /* TabPageCell.xib */,
+				3B8314901DF2B141005D1657 /* PageView.xib */,
+				3B8314921DF2B170005D1657 /* PageView.swift */,
 			);
 			path = DemoPageVC;
 			sourceTree = "<group>";
@@ -111,6 +117,7 @@
 				TargetAttributes = {
 					3BCA73961D6CB0860076E745 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0810;
 					};
 				};
 			};
@@ -141,6 +148,7 @@
 				3BCA73A51D6CB0860076E745 /* LaunchScreen.storyboard in Resources */,
 				3BCA73A21D6CB0860076E745 /* Assets.xcassets in Resources */,
 				3BCA73A01D6CB0860076E745 /* Main.storyboard in Resources */,
+				3B8314911DF2B141005D1657 /* PageView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,6 +165,7 @@
 				3BCA739D1D6CB0860076E745 /* MainViewController.swift in Sources */,
 				3BCEC04B1D77D7E000D1D513 /* TabPageCell.swift in Sources */,
 				3BCA739B1D6CB0860076E745 /* AppDelegate.swift in Sources */,
+				3B8314931DF2B170005D1657 /* PageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +289,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.DucMinh.app.DemoPageVC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -292,7 +301,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.DucMinh.app.DemoPageVC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

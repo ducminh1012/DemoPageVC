@@ -9,8 +9,8 @@
 import UIKit
 
 protocol PageViewControllerDelegate {
-    func didFinishAnimating(index: Int)
-    func scrollCurrentBarView(index: Int, contentOffsetX: CGFloat)
+    func didFinishAnimating(_ index: Int)
+    func scrollCurrentBarView(_ index: Int, contentOffsetX: CGFloat)
 }
 
 class PageViewController: UIPageViewController {
@@ -22,9 +22,9 @@ class PageViewController: UIPageViewController {
     var currentScrollIndex = 0
     
     var pageViewDelegate: PageViewControllerDelegate?
-    var pageColors : Array<UIColor> = [UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.redColor(), UIColor.greenColor(), UIColor.blueColor()]
+    var pageColors : Array<UIColor> = [UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue]
     
-    private(set) lazy var orderedViewControllers: [ContentViewController] = {
+    fileprivate(set) lazy var orderedViewControllers: [ContentViewController] = {
         return [self.newColoredViewController("red"),
                 self.newColoredViewController("green"),
                 self.newColoredViewController("blue"),
@@ -37,9 +37,9 @@ class PageViewController: UIPageViewController {
                 self.newColoredViewController("red")]
     }()
     
-    private func newColoredViewController(color: String) -> ContentViewController {
+    fileprivate func newColoredViewController(_ color: String) -> ContentViewController {
         return UIStoryboard(name: "Main", bundle: nil) .
-            instantiateViewControllerWithIdentifier("\(color)") as! ContentViewController
+            instantiateViewController(withIdentifier: "\(color)") as! ContentViewController
     }
     
     
@@ -59,7 +59,7 @@ class PageViewController: UIPageViewController {
         
         if let firstViewController = orderedViewControllers.first {
             setViewControllers([firstViewController],
-                               direction: .Forward,
+                               direction: .forward,
                                animated: true,
                                completion: nil)
         }
@@ -72,7 +72,7 @@ class PageViewController: UIPageViewController {
 extension PageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource, UIScrollViewDelegate{
 
     
-    func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController?
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController?
     {
         var index = (viewController as! ContentViewController).pageIndex
         
@@ -89,7 +89,7 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
         
     }
     
-    func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController?
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController?
     {
         var index = (viewController as! ContentViewController).pageIndex
         
@@ -107,7 +107,7 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
         return viewControllerAtIndex(index)
     }
     
-    func viewControllerAtIndex(index: Int) -> ContentViewController?
+    func viewControllerAtIndex(_ index: Int) -> ContentViewController?
     {
         
         // Create a new view controller and pass suitable data.
@@ -120,7 +120,7 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
     }
     
     
-    func pageViewController(pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
 
         if completed {
             let previousVC = previousViewControllers[0] as! ContentViewController
@@ -138,18 +138,18 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
         
     }
 
-    func pageViewController(pageViewController: UIPageViewController, willTransitionToViewControllers pendingViewControllers: [UIViewController]) {
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
             let viewController = pendingViewControllers[0] as! ContentViewController
             
             self.currentIndex = viewController.pageIndex
     }
 
-    func didSelectTab(index: Int){
+    func didSelectTab(_ index: Int){
 //        print("index \(index)")
         
         shouldScroll = false
         
-        let direction: UIPageViewControllerNavigationDirection = index >= self.currentIndex ? .Forward : .Reverse
+        let direction: UIPageViewControllerNavigationDirection = index >= self.currentIndex ? .forward : .reverse
        
         let nextViewController = viewControllerAtIndex(index)
 
@@ -160,7 +160,7 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         
         if shouldScroll {
@@ -190,6 +190,9 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
            
             
             let scrollOffsetX = scrollView.contentOffset.x - view.frame.width
+            
+            print(scrollView.contentOffset.x)
+            
             
             self.pageViewDelegate?.scrollCurrentBarView(nextIndex, contentOffsetX: scrollOffsetX)
 //            print("currentIndex: \(currentIndex)")

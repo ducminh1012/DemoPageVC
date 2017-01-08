@@ -16,7 +16,7 @@ class TabPageCell: UICollectionViewCell {
     
     var isCurrent: Bool = false {
         didSet {
-            currentBarView.hidden = !isCurrent
+            currentBarView.isHidden = !isCurrent
             if isCurrent {
                 highlightTitle()
             } else {
@@ -47,18 +47,18 @@ class TabPageCell: UICollectionViewCell {
         
         view.frame = bounds
         
-        view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         addSubview(view)
 
     }
     
     func loadViewFromNib() -> UIView{
-        let bundle = NSBundle(forClass: self.dynamicType)
+        let bundle = Bundle(for: type(of: self))
         
         let nib = UINib(nibName: "TabPageCell", bundle: bundle)
         
-        let view = nib.instantiateWithOwner(self, options: nil)[0] as! UIView
+        let view = nib.instantiate(withOwner: self, options: nil)[0] as! UIView
         
         return view
     }
@@ -86,11 +86,11 @@ extension TabPageCell {
 //    }
     
     func hideCurrentBarView() {
-        currentBarView.hidden = true
+        currentBarView.isHidden = true
     }
     
     func showCurrentBarView() {
-        currentBarView.hidden = false
+        currentBarView.isHidden = false
     }
     
     func highlightTitle() {

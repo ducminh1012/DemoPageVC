@@ -1,65 +1,68 @@
 //
-//  ViewController.swift
+//  PageView.swift
 //  DemoPageVC
 //
-//  Created by Duc Minh on 8/23/16.
+//  Created by Kyou on 12/3/16.
 //  Copyright © 2016 Duc Minh. All rights reserved.
 //
 
 import UIKit
 
-class MainViewController: UIViewController {
+class PageView: UIView {
 
-//    @IBOutlet weak var contentView: UIView!
-    
-    var segmentCollectionView: UICollectionView!
-    
-    
+//    @IBOutlet var view: UIView!
+    @IBOutlet weak var segmentCollectionView: UICollectionView!
+
     var currentBarView: UIView!
-    var currentIndex = 0
-
+    var pageViewDelegate: PageViewControllerDelegate?
+    var shouldScroll = true
+    
+    var currentIndex : Int = 0
+    
+    var currentScrollIndex = 0
+    
     var pageVC: PageViewController?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        let collectionViewLayout = UICollectionViewFlowLayout()
-        collectionViewLayout.scrollDirection = .horizontal
+    var pageColors : Array<UIColor> = [UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue, UIColor.red, UIColor.green, UIColor.blue]
+    
+    fileprivate func newColoredViewController(_ color: String) -> ContentViewController {
+        return UIStoryboard(name: "Main", bundle: nil) .
+            instantiateViewController(withIdentifier: "\(color)") as! ContentViewController
+    }
+    
+    fileprivate(set) lazy var orderedViewControllers: [ContentViewController] = {
+        return [self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red"),
+                self.newColoredViewController("green"),
+                self.newColoredViewController("blue"),
+                self.newColoredViewController("red")]
+    }()
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         
-        segmentCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 60), collectionViewLayout: collectionViewLayout)
-        segmentCollectionView.showsHorizontalScrollIndicator = false
-        segmentCollectionView.register(UINib(nibName: "TabPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
-        segmentCollectionView.delegate = self
-        segmentCollectionView.dataSource = self
-        segmentCollectionView.backgroundColor = UIColor.white
-        segmentCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionViewScrollPosition())
+        let xibView = Bundle.main.loadNibNamed("PageView", owner: self, options: nil)?[0] as! UIView
+        xibView.frame = self.bounds
+        xibView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.addSubview(xibView)
+        
         
         if PageConfigures.isFollowFinger {
             currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
             currentBarView.backgroundColor = UIColor.blue
-            segmentCollectionView.addSubview(currentBarView)
+            self.segmentCollectionView.addSubview(currentBarView)
         }
-        
-        view.addSubview(segmentCollectionView)
-        
-        let pageViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        pageViewController.pageViewDelegate = self
-        addChildViewController(pageViewController)
-        view.addSubview(pageViewController.view)
-        constrainViewEqual(holderView: view, view: pageViewController.view)
-        pageViewController.didMove(toParentViewController: self)
 
     }
-    
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let vc = segue.destination as! PageViewController
-        vc.pageViewDelegate = self
-        pageVC = vc
-    }
+
 }
 
-extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, PageViewControllerDelegate{
+extension PageView: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, PageViewControllerDelegate{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return Int(PageConfigures.numberOfPages)
@@ -115,8 +118,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         cell.showCurrentBarView()
         cell.highlightTitle()
         
-        segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-        
+        self.segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
         
         pageVC?.didSelectTab(indexPath.item)
     }
@@ -140,10 +142,10 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 }
             }
             
-            segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            self.segmentCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             
             
-            currentIndex = index
+            self.currentIndex = index
             
             cell.showCurrentBarView()
         }
@@ -161,10 +163,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             nextCell.hideCurrentBarView()
             currentCell.hideCurrentBarView()
             
-            let scrollRate = contentOffsetX / view.frame.width
+            let scrollRate = contentOffsetX / self.frame.width
             
-            
-            print(scrollRate)
             if !PageConfigures.isFollowFinger {
                 
                 if fabs(scrollRate) > 0.5 {
@@ -182,40 +182,11 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                     currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * currentCell.frame.width
                     
                 } else {
-                    currentBarView.frame.origin.x = nextCell.frame.maxX + scrollRate * nextCell.frame.width
+                    currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * nextCell.frame.width
                 }
             }
             
         }
     }
     
-}
-
-extension UIViewController {
-    func configureChildViewController(childController: UIViewController, onView: UIView?) {
-        var holderView = self.view
-        if let onView = onView {
-            holderView = onView
-        }
-        addChildViewController(childController)
-        holderView?.addSubview(childController.view)
-        constrainViewEqual(holderView: holderView!, view: childController.view)
-        childController.didMove(toParentViewController: self)
-    }
-    
-    
-    func constrainViewEqual(holderView: UIView, view: UIView) {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        //pin 100 points from the top of the super
-        let pinTop = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal,
-                                        toItem: holderView, attribute: .top, multiplier: 1.0, constant: 50)
-        let pinBottom = NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal,
-                                           toItem: holderView, attribute: .bottom, multiplier: 1.0, constant: 0)
-        let pinLeft = NSLayoutConstraint(item: view, attribute: .left, relatedBy: .equal,
-                                         toItem: holderView, attribute: .left, multiplier: 1.0, constant: 0)
-        let pinRight = NSLayoutConstraint(item: view, attribute: .right, relatedBy: .equal,
-                                          toItem: holderView, attribute: .right, multiplier: 1.0, constant: 0)
-        
-        holderView.addConstraints([pinTop, pinBottom, pinLeft, pinRight])
-    }
 }
