@@ -12,8 +12,10 @@ class MainViewController: UIViewController {
 
 //    @IBOutlet weak var contentView: UIView!
     
+    @IBOutlet weak var contentView: UIView!
     var segmentCollectionView: UICollectionView!
     
+    var currentBarLeftConstraint = NSLayoutConstraint()
     
     var currentBarView: UIView!
     var currentIndex = 0
@@ -25,8 +27,10 @@ class MainViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .horizontal
+
         
-        segmentCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 60), collectionViewLayout: collectionViewLayout)
+        segmentCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+    
         segmentCollectionView.showsHorizontalScrollIndicator = false
         segmentCollectionView.register(UINib(nibName: "TabPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         segmentCollectionView.delegate = self
@@ -34,22 +38,70 @@ class MainViewController: UIViewController {
         segmentCollectionView.backgroundColor = UIColor.white
         segmentCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionViewScrollPosition())
         
-        if PageConfigures.isFollowFinger {
-            currentBarView = UIView(frame: CGRect(x: 0, y: segmentCollectionView.frame.height - 5, width: 100, height: 5))
-            currentBarView.backgroundColor = UIColor.blue
-            segmentCollectionView.addSubview(currentBarView)
-        }
         
-        view.addSubview(segmentCollectionView)
+        
+        contentView.addSubview(segmentCollectionView)
         
         let pageViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pageViewController.pageViewDelegate = self
         addChildViewController(pageViewController)
-        view.addSubview(pageViewController.view)
-        constrainViewEqual(holderView: view, view: pageViewController.view)
+        contentView.addSubview(pageViewController.view)
         pageViewController.didMove(toParentViewController: self)
+        
+        // Add Layout Constraints
+        segmentCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        let pinTopSegment = NSLayoutConstraint(item: segmentCollectionView, attribute: .top, relatedBy: .equal,
+                                               toItem: contentView, attribute: .top, multiplier: 1.0, constant: 60)
+        let pinLeftSegment = NSLayoutConstraint(item: segmentCollectionView, attribute: .left, relatedBy: .equal,
+                                                toItem: contentView, attribute: .left, multiplier: 1.0, constant: 0)
+        let pinRightSegment = NSLayoutConstraint(item: segmentCollectionView, attribute: .right, relatedBy: .equal,
+                                                 toItem: contentView, attribute: .right, multiplier: 1.0, constant: 0)
+        let pinHeightSegment = NSLayoutConstraint(item: segmentCollectionView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 60)
+        
 
+        let pinTopContainer = NSLayoutConstraint(item: pageViewController.view, attribute: .top, relatedBy: .equal,
+                                                 toItem: segmentCollectionView, attribute: .bottom, multiplier: 1.0, constant: 0)
+        let pinBottomContainer = NSLayoutConstraint(item: pageViewController.view, attribute: .bottom, relatedBy: .equal,
+                                                    toItem: contentView, attribute: .bottom, multiplier: 1.0, constant: 0)
+        let pinLeftContainer = NSLayoutConstraint(item: pageViewController.view, attribute: .left, relatedBy: .equal,
+                                                  toItem: contentView, attribute: .left, multiplier: 1.0, constant: 0)
+        let pinRightContainer = NSLayoutConstraint(item: pageViewController.view, attribute: .right, relatedBy: .equal,
+                                                   toItem: contentView, attribute: .right, multiplier: 1.0, constant: 0)
+        
+        view.addConstraints([pinTopSegment, pinLeftSegment, pinRightSegment, pinHeightSegment, pinTopContainer, pinBottomContainer, pinLeftContainer, pinRightContainer])
+
+
+//        if PageConfigures.isFollowFinger {
+            currentBarView = UIView()
+            currentBarView.backgroundColor = UIColor.blue
+            contentView.addSubview(currentBarView)
+            
+            currentBarView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let currentBarConstraintBottom = NSLayoutConstraint(item: currentBarView, attribute: .bottom, relatedBy: .equal,
+                                                                toItem: segmentCollectionView, attribute: .bottom, multiplier: 1.0, constant: 0)
+            
+            currentBarLeftConstraint = NSLayoutConstraint(item: currentBarView, attribute: .left, relatedBy: .equal,
+                                                              toItem: segmentCollectionView, attribute: .left, multiplier: 1.0, constant: 0)
+            
+            let currentBarConstraintWidth = NSLayoutConstraint(item: currentBarView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100)
+            
+            
+            let currentBarConstraintHeight = NSLayoutConstraint(item: currentBarView, attribute: .height, relatedBy: .equal,
+                                                                toItem: nil, attribute: .notAnAttribute , multiplier: 1.0, constant: 5)
+            
+            view.addConstraints([currentBarLeftConstraint, currentBarConstraintWidth, currentBarConstraintBottom, currentBarConstraintHeight])
+            
+            
+//        }
+        
+        
+        
     }
+
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -178,12 +230,12 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 }
             }else{
                 
-                if scrollRate > 0 {
-                    currentBarView.frame.origin.x = currentCell.frame.minX + scrollRate * currentCell.frame.width
+                print(scrollRate)
+                print("origin \(currentBarView.frame.origin.x)")
+
+                currentBarLeftConstraint.constant = currentCell.frame.minX + scrollRate * currentCell.frame.width
                     
-                } else {
-                    currentBarView.frame.origin.x = nextCell.frame.maxX + scrollRate * nextCell.frame.width
-                }
+                
             }
             
         }
@@ -218,4 +270,20 @@ extension UIViewController {
         
         holderView.addConstraints([pinTop, pinBottom, pinLeft, pinRight])
     }
+    
+    func constraintZero(containterView: UIView, view: UIView) {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        //pin 100 points from the top of the super
+        let pinTop = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal,
+                                        toItem: containterView, attribute: .top, multiplier: 1.0, constant: 0)
+        let pinBottom = NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal,
+                                           toItem: containterView, attribute: .bottom, multiplier: 1.0, constant: 0)
+        let pinLeft = NSLayoutConstraint(item: view, attribute: .left, relatedBy: .equal,
+                                         toItem: containterView, attribute: .left, multiplier: 1.0, constant: 0)
+        let pinRight = NSLayoutConstraint(item: view, attribute: .right, relatedBy: .equal,
+                                          toItem: containterView, attribute: .right, multiplier: 1.0, constant: 0)
+        
+        containterView.addConstraints([pinTop, pinBottom, pinLeft, pinRight])
+    }
+
 }
